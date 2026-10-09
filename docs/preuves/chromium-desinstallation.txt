@@ -1,0 +1,6 @@
+editor 200
+public 200
+PASS root uninstalled: no plugin assets/buttons, native fields and public submission still work
+editor 200
+public 200
+PASS /mautic uninstalled: no plugin assets/buttons, native fields and public submission still work

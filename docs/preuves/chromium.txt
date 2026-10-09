@@ -1,0 +1,5 @@
+COPY RESPONSE  200 [ 'success', 'rootId', 'fieldHtml', 'message' ]
+PASS root double-click, modal guard, label edit, failure/retry, save/reopen, AJAX cancel/list/edit, public conditional visibility and submission
+COPY RESPONSE /mautic 200 [ 'success', 'rootId', 'fieldHtml', 'message' ]
+PASS /mautic double-click, modal guard, label edit, failure/retry, save/reopen, AJAX cancel/list/edit, public conditional visibility and submission
+PASS no JavaScript errors

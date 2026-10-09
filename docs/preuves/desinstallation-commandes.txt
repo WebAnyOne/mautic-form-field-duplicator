@@ -1,0 +1,13 @@
+cache:clear exit=0
+
+ // Clearing the cache for the prod environment with debug false                
+
+ [OK] Cache for the "prod" environment (debug=false) was successfully cleared.  
+
+
+mautic:plugins:reload exit=0
+0 new plugins were installed and 0 updated.
+
+mautic:assets:generate exit=0
+Production assets have been regenerated.
+

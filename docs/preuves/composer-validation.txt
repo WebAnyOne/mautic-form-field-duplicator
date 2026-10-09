@@ -1,0 +1,4 @@
+./composer.json is valid, but with a few warnings
+See https://getcomposer.org/doc/04-schema.md for details on the schema
+# General warnings
+- The version field is present, it is recommended to leave it out if the package is published on Packagist.

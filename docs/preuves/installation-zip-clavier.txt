@@ -1,0 +1,3 @@
+PASS root ZIP installation: native services, route, asset, keyboard Enter duplication and draft Cancel
+PASS /mautic ZIP installation: native services, route, asset, keyboard Enter duplication and draft Cancel
+PASS no JavaScript errors
