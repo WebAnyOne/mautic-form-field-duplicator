@@ -72,3 +72,7 @@ Les sorties finales et deux captures de l’éditeur sont dans [preuves/](preuve
 - Handler PHP local verrouillant la session ; Redis et requêtes réellement concurrentes non exécutés. Le brouillon natif reste partagé entre onglets du même formulaire enregistré.
 - HTML/JavaScript libre : aucune réécriture arbitraire ; IDs et références internes doivent être revus lorsque leur relation ne peut être déterminée. Types tiers et remplacements des types natifs refusés.
 - Aucun déploiement dans votre Mautic réel n’a été effectué. Le ZIP est prêt à être installé selon le README.
+
+## Complément du 11 octobre 2026
+
+La préparation de release a réexécuté les 34 tests / 320 assertions sur PHP 8.1.31, **8.2.26** et 8.3.14 avec un nouveau checkout jetable. La limite PHP 8.2 ci-dessus décrit la recette initiale du 8 octobre ; voir [RELEASE_VALIDATION.md](RELEASE_VALIDATION.md) pour les nouveaux résultats et les contrôles de publication. PHP 8.4 reste non exécuté.

@@ -9,7 +9,7 @@ Version 1.0.0 — licence GPL-3.0-or-later. Développé pour Mautic 6.x, cible v
 Depuis la racine de votre installation Mautic :
 
 ```sh
-unzip WebAnyOneFormFieldDuplicator-1.0.0.zip -d plugins/
+unzip WebAnyOneFormFieldDuplicatorBundle-1.0.0.zip -d plugins/
 php bin/console cache:clear --env=prod
 php bin/console mautic:plugins:reload --env=prod
 php bin/console mautic:assets:generate --env=prod
@@ -19,19 +19,21 @@ La structure doit être `plugins/WebAnyOneFormFieldDuplicatorBundle/WebAnyOneFor
 
 Ouvrez **Paramètres → Plugins**, sélectionnez **WebAnyOne Form Field Duplicator** et publiez l’intégration. Aucun identifiant externe n’est demandé. Rechargez complètement l’administration pour charger son JavaScript.
 
-## Installation Composer locale
+## Installation Composer depuis GitHub
 
-Le paquet n’est pas publié sur Packagist. Il est installable depuis le répertoire source fourni. Exemple, en plaçant ce répertoire dans `/opt/mautic-local-plugins/WebAnyOneFormFieldDuplicatorBundle` :
+Le paquet n’est pas publié sur Packagist. Après publication du tag `v1.0.0`, déclarer le dépôt GitHub dans le projet Mautic :
 
 ```sh
-composer config repositories.wao-field-duplicator path /opt/mautic-local-plugins/WebAnyOneFormFieldDuplicatorBundle
-composer require webanyone/form-field-duplicator:1.0.0
+composer config repositories.wao-field-duplicator vcs https://github.com/WebAnyOne/mautic-form-field-duplicator.git
+composer require webanyone/form-field-duplicator:^1.0
 php bin/console cache:clear --env=prod
 php bin/console mautic:plugins:reload --env=prod
 php bin/console mautic:assets:generate --env=prod
 ```
 
-Le `type: mautic-plugin` et `extra.installer-name` placent le bundle dans `plugins/WebAnyOneFormFieldDuplicatorBundle`. Cela a été vérifié avec composer/installers 1.12.0, un dépôt local sans symlink et un contrat core-lib 6.0.9 dans un projet d’installation isolé. Le parcours complet Mautic a été validé avec l’installation manuelle. Ne combinez pas les deux modes dans la même installation.
+La version Composer provient du tag Git. Le `type: mautic-plugin` et `extra.install-directory-name` placent le bundle dans `plugins/WebAnyOneFormFieldDuplicatorBundle` avec l’installateur Mautic de composer/installers. `extra.installer-name` conserve aussi ce nom pour les installations utilisant un chemin personnalisé `plugins/{$name}`. Ne combinez pas les installations manuelle et Composer dans la même instance.
+
+Pour tester une source locale avant publication, utiliser un dépôt Composer `path` dont l’option `versions` fixe `webanyone/form-field-duplicator` à `1.0.0`, puis exiger cette version. Voir [la validation de la préparation de release](docs/RELEASE_VALIDATION.md).
 
 Le checkout Git officiel du tag fixe son paquet path `mautic/core-lib` à `6.0.0-dev`, contrairement à une distribution versionnée 6.0.9. Sur ce checkout, utilisez l’installation manuelle ; n’abaissez pas la contrainte du plugin pour contourner cette différence.
 
@@ -79,7 +81,7 @@ Un subscriber local corrige aussi l’index en mémoire des nouveaux champs apr�
 
 ## Mise à jour et désinstallation
 
-Pour une installation manuelle, remplacez uniquement le répertoire du bundle par la nouvelle version, puis relancez les trois commandes d’installation. Pour Composer, mettez à jour le dépôt source local puis exécutez `composer update webanyone/form-field-duplicator` et les mêmes commandes. Fermez/réouvrez les éditeurs après mise à jour.
+Pour une installation manuelle, remplacez uniquement le répertoire du bundle par la nouvelle version, puis relancez les trois commandes d’installation. Pour Composer, exécutez `composer update webanyone/form-field-duplicator` et les mêmes commandes. Fermez/réouvrez les éditeurs après mise à jour.
 
 Pour désactiver, dépubliez l’intégration puis rechargez complètement l’administration : le bouton et la déclaration d’asset disparaissent. Les champs enregistrés continuent à fonctionner.
 
@@ -102,3 +104,11 @@ php bin/phpunit -c plugins/WebAnyOneFormFieldDuplicatorBundle/phpunit.xml.dist p
 Si le bouton manque, vérifiez la publication de l’intégration, le rechargement complet de la page, les permissions et le chargement de `plugins/WebAnyOneFormFieldDuplicatorBundle/Assets/library/js/duplicator.js`. Vérifiez aussi que le champ n’est pas exclu. En sous-répertoire, les URLs proviennent du routeur et du helper d’assets natifs.
 
 Un message « brouillon plus actif » signifie généralement qu’un autre onglet a rouvert le formulaire ou qu’un enregistrement/une annulation a terminé ce brouillon. Un groupe refusé indique un type exclu, un parent manquant/cyclique, une liste CRM non résolue ou des attributs HTML incompatibles. Corrigez la cause dans l’éditeur natif. Une erreur générique peut venir du rendu Twig ou de la session ; les copies ne sont ajoutées qu’après rendu réussi.
+
+## Releases et contributions
+
+Télécharger l’archive **WebAnyOneFormFieldDuplicatorBundle-1.0.0.zip** et son fichier `.zip.sha256` dans les [releases GitHub](https://github.com/WebAnyOne/mautic-form-field-duplicator/releases). Les archives automatiques « Source code » de GitHub ne possèdent pas la structure d’installation du bundle.
+
+Le tag `v1.0.0` déclenche les tests, puis la création d’une release en brouillon avec les [notes de version](docs/releases/1.0.0.md), le ZIP et sa somme de contrôle. Lire [la procédure de publication](docs/PUBLISHING.md), [le guide de contribution](CONTRIBUTING.md) et [la politique de sécurité](SECURITY.md).
+
+Construire le ZIP localement : `python3 scripts/build-release.py --version 1.0.0`. La version doit correspondre à `Config/config.php`. Les résultats vont dans `dist/`, ignoré par Git.

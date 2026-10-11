@@ -1,0 +1,22 @@
+name: Signaler un bug
+description: Décrire un problème reproductible avec le plugin
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Mautic, PHP et version du plugin
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Étapes, résultat attendu et résultat obtenu
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostic
+    attributes:
+      label: Informations complémentaires
+      description: Message d’erreur, type de formulaire, type de champ et éventuels descendants conditionnels. Retirer les identifiants et données privées des extraits.

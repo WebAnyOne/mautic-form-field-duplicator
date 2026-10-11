@@ -1,0 +1,94 @@
+name: Tests
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  php:
+    name: Mautic 6.0.9 / PHP ${{ matrix.php }}
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: wao_form_field_duplicator_ci
+        ports:
+          - 3306/tcp
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      APP_ENV: test
+      APP_DEBUG: '1'
+      DB_HOST: 127.0.0.1
+      DB_NAME: wao_form_field_duplicator_ci
+      DB_USER: root
+      DB_PASSWD: ''
+      MAUTIC_DB_PREFIX: test_
+      SYMFONY_DEPRECATIONS_HELPER: disabled
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: mautic/mautic
+          ref: '6.0.9'
+          path: mautic
+          persist-credentials: false
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: gd, fileinfo, tokenizer, mbstring, xml, ctype, iconv, intl, pdo_mysql, imap, zip, curl, bcmath
+          tools: composer:v2
+          coverage: none
+      - name: Validate manifest and PHP syntax
+        run: |
+          composer validate --strict --working-dir=plugin
+          find plugin -type f -name '*.php' -print0 | xargs -0 -n 1 php -l
+      - name: Install Mautic test dependencies
+        working-directory: mautic
+        run: composer install --no-interaction --prefer-dist --no-progress --no-scripts
+      - name: Configure disposable test instance
+        run: |
+          cp mautic/.github/ci-files/.my.cnf ~/.my.cnf
+          python3 plugin/scripts/prepare-tests.py --mautic mautic
+      - name: Unit and functional tests
+        working-directory: mautic
+        env:
+          DB_PORT: ${{ job.services.mysql.ports['3306'] }}
+        run: php -d memory_limit=1G bin/phpunit -c plugins/WebAnyOneFormFieldDuplicatorBundle/phpunit.xml.dist
+
+  javascript-and-package:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax and packaging tests
+        run: |
+          node --check Assets/library/js/duplicator.js
+          python3 -m unittest discover -s Tests/Packaging -v
+      - name: Build installable archive
+        run: |
+          python3 scripts/build-release.py
+          cd dist
+          sha256sum -c *.zip.sha256
